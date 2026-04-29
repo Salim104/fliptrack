@@ -1,36 +1,34 @@
-# Current Feature: Inventory (/inventory)
+# Current Feature: Sell (/sell)
 
 ## Feature File
-`context/features/02-inventory.md`
+`context/features/04-sell.md`
 
 ## What to Build
-1. src/lib/mock-data.ts — add stockItems array (8 items matching Pencil design)
-2. src/components/inventory/StockCard.tsx — card: photo, model, storage/color/grade, price, badge
-3. src/components/inventory/StockGrid.tsx — client component: search state + 4-col grid
-4. src/app/(dashboard)/inventory/page.tsx — inventory page, composes StockGrid
+1. src/components/sell/PhoneDetailCard.tsx — left card: photo, model, spec rows, cost price
+2. src/components/sell/SaleForm.tsx — right card: all fields, profit banner, buttons
+3. src/app/(dashboard)/sell/page.tsx — page, two-col layout, loads mock stock item
 
 ## Build Order
-Build in the order listed above — mock data first, then card, then grid, then page.
+Build in the order listed above — detail card first, then form, then page.
 
 ## Design Reference
-- Pencil file: context/pencil-designs/ — use the Inventory frame
-- 4-col grid desktop, 2-col mobile
-- Card: full-width photo (rounded top), model bold, muted storage · color · grade,
-  cost price in #00FF88, status badge bottom-right
-- Top bar: title + subtitle left, search input + "+ Add Stock" button right
-- In Stock badge: green dot + green text; Sold badge: red dot + red text
+- Pencil file: context/pencil-designs/ — use the Sell frame
+- Two-column layout: left card (phone info) + right card (sale form)
+- Left card: photo top, model bold, spec label/value rows, Cost Price in #00FF88
+- Right card: "Sale Details" heading, Buyer Name, Buyer Phone (+27 prefix),
+  Sale Price + Payment Method same row, Estimated Profit banner, Cancel + Confirm Sale
+- Estimated Profit banner: dark green tint bg, label left, live ZAR value right (accent)
 
 ## Notes
-- Frontend only — no Prisma, no Clerk, no server actions
-- All data from src/lib/mock-data.ts — extend the existing file, do not replace it
-- Search filters by model name client-side
-- "+ Add Stock" button href="/add-stock" (non-functional for now)
-- Card click is non-functional this phase
-- Use real photo URLs from Unsplash for the 8 mock stock items
-- Subtitle "124 phones in stock" — hardcode from mock metrics or count IN_STOCK items
+- Frontend only — no Prisma, no Clerk, no API calls
+- Confirm Sale logs form state to console only
+- Estimated Profit = salePrice - costPrice, recalculates on every Sale Price keystroke
+- Phone data: use first IN_STOCK item from src/lib/mock-data.ts stockItems array
+- Cancel and "Back to Inventory" both navigate to /inventory
+- Payment Method options: Cash, EFT, SnapScan, Yoco, Other
+- Mobile: left card stacks above right card (single column)
 
 ## Status
-`Complete`
+`Not Started`
 
 ## History
-- 2026-04-29: Implemented. Added stockItems to mock-data.ts (8 items matching Pencil design). Created StockCard, StockGrid (client, search state), inventory/page.tsx. Configured next.config.ts for Unsplash image domains. npm run build passes.
