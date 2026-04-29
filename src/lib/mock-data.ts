@@ -30,6 +30,25 @@ export interface StockItem {
   imageUrl: string
 }
 
+export interface SaleRecord {
+  id: string
+  date: string
+  phone: string
+  buyer: string
+  salePrice: number
+  costPrice: number
+}
+
+export const salesHistory: SaleRecord[] = [
+  { id: '1', date: '28 Apr 2026', phone: 'iPhone 15 Pro 256GB',    buyer: 'Sipho Ndlovu',    salePrice: 8500, costPrice: 6400 },
+  { id: '2', date: '27 Apr 2026', phone: 'iPhone 13 128GB',         buyer: 'Lerato Molefe',   salePrice: 4200, costPrice: 3150 },
+  { id: '3', date: '25 Apr 2026', phone: 'iPhone 14 Pro Max 256GB', buyer: 'Thabo Mahlangu',  salePrice: 7800, costPrice: 5200 },
+  { id: '4', date: '23 Apr 2026', phone: 'iPhone 12 64GB',          buyer: 'Nomsa Dlamini',   salePrice: 3100, costPrice: 2250 },
+  { id: '5', date: '21 Apr 2026', phone: 'iPhone 15 128GB',         buyer: 'Bongani Mthembu', salePrice: 6900, costPrice: 5100 },
+  { id: '6', date: '19 Apr 2026', phone: 'iPhone 14 128GB',         buyer: 'Zanele Khumalo',  salePrice: 5400, costPrice: 4000 },
+  { id: '7', date: '17 Apr 2026', phone: 'iPhone 11 64GB',          buyer: 'Mandla Sithole',  salePrice: 2300, costPrice: 1700 },
+]
+
 export const stockItems: StockItem[] = [
   {
     id: '1',
