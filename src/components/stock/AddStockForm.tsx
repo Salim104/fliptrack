@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import Link from 'next/link'
-import { Plus } from 'lucide-react'
+import { Plus, Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 import PhotoUploadZone from './PhotoUploadZone'
 import {
   Select,
@@ -11,6 +12,7 @@ import {
   SelectContent,
   SelectItem,
 } from '@/src/components/ui/select'
+import { createStockItem } from '@/app/actions/stock'
 
 const MODELS = [
   'iPhone 11', 'iPhone 12', 'iPhone 12 Mini', 'iPhone 13', 'iPhone 13 Mini',
@@ -86,8 +88,18 @@ export default function AddStockForm() {
   const [condition, setCondition] = useState('')
   const [imei, setImei]           = useState('')
   const [costPrice, setCostPrice] = useState('')
+  const [images, setImages]       = useState<string[]>([])
   const [errors, setErrors]       = useState<Partial<Record<string, string>>>({})
   const [submitted, setSubmitted] = useState(false)
+  const [isPending, startTransition] = useTransition()
+
+  function handleUpload(publicId: string) {
+    setImages((prev) => [...prev, publicId])
+  }
+
+  function handleRemove(publicId: string) {
+    setImages((prev) => prev.filter((id) => id !== publicId))
+  }
 
   function handleSubmit() {
     const fields = { model, storage, color, condition, imei, costPrice }
@@ -95,7 +107,13 @@ export default function AddStockForm() {
     setErrors(errs)
     setSubmitted(true)
     if (Object.keys(errs).length > 0) return
-    console.log({ model, storage, color, condition, imei, costPrice: Number(costPrice) })
+
+    startTransition(async () => {
+      const result = await createStockItem({ model, storage, color, condition, imei, costPrice, images })
+      if (result?.error) {
+        toast.error(result.error)
+      }
+    })
   }
 
   const hasErrors = submitted && Object.keys(errors).length > 0
@@ -106,7 +124,7 @@ export default function AddStockForm() {
       style={{ background: '#1A1A1A', border: '1px solid #222222', padding: 32 }}
     >
       <div className="flex flex-col lg:flex-row gap-6">
-        <PhotoUploadZone />
+        <PhotoUploadZone images={images} onUpload={handleUpload} onRemove={handleRemove} />
 
         <div className="flex-1 flex flex-col gap-4">
           {/* Phone Model */}
@@ -230,11 +248,28 @@ export default function AddStockForm() {
         <button
           type="button"
           onClick={handleSubmit}
+          disabled={isPending}
           className="flex items-center justify-center gap-2 rounded-lg text-sm font-bold"
-          style={{ height: 44, padding: '0 32px', background: '#00FF88', color: '#0A0A0A' }}
+          style={{
+            height: 44,
+            padding: '0 32px',
+            background: isPending ? '#00CC70' : '#00FF88',
+            color: '#0A0A0A',
+            opacity: isPending ? 0.8 : 1,
+            cursor: isPending ? 'not-allowed' : 'pointer',
+          }}
         >
-          <Plus size={16} color="#0A0A0A" />
-          Add to Stock
+          {isPending ? (
+            <>
+              <Loader2 size={16} color="#0A0A0A" className="animate-spin" />
+              Adding...
+            </>
+          ) : (
+            <>
+              <Plus size={16} color="#0A0A0A" />
+              Add to Stock
+            </>
+          )}
         </button>
       </div>
     </div>
