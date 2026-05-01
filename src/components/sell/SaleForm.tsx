@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Check } from 'lucide-react'
 import type { StockItem } from '@/src/lib/mock-data'
+import { zar } from '@/src/lib/format'
 import {
   Select,
   SelectTrigger,
@@ -20,26 +21,57 @@ const labelStyle: React.CSSProperties = {
   fontWeight: 600,
 }
 
-export default function SaleForm({ item }: { item: StockItem }) {
-  const [buyerName, setBuyerName]       = useState('')
-  const [buyerPhone, setBuyerPhone]     = useState('')
-  const [salePrice, setSalePrice]       = useState('')
-  const [paymentMethod, setPaymentMethod] = useState('')
+function FieldError({ msg }: { msg?: string }) {
+  if (!msg) return null
+  return <span style={{ color: '#FF4444', fontSize: 12 }}>{msg}</span>
+}
 
-  const profit = Number(salePrice) - item.costPrice
-  const formattedProfit =
-    salePrice !== '' && profit > 0
-      ? `R ${profit.toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-      : 'R 0.00'
+function validate(fields: {
+  buyerName: string; buyerPhone: string; salePrice: string; paymentMethod: string
+}) {
+  const errors: Partial<Record<keyof typeof fields, string>> = {}
+  if (!fields.buyerName.trim())     errors.buyerName     = 'Buyer name is required'
+  if (!fields.buyerPhone.trim())    errors.buyerPhone    = 'Phone number is required'
+  if (!fields.paymentMethod)        errors.paymentMethod = 'Payment method is required'
+  const price = Number(fields.salePrice)
+  if (!fields.salePrice) {
+    errors.salePrice = 'Sale price is required'
+  } else if (isNaN(price) || price <= 0) {
+    errors.salePrice = 'Enter a valid price greater than 0'
+  }
+  return errors
+}
+
+export default function SaleForm({ item }: { item: StockItem }) {
+  const [buyerName, setBuyerName]           = useState('')
+  const [buyerPhone, setBuyerPhone]         = useState('')
+  const [salePrice, setSalePrice]           = useState('')
+  const [paymentMethod, setPaymentMethod]   = useState('')
+  const [errors, setErrors]                 = useState<Partial<Record<string, string>>>({})
+  const [submitted, setSubmitted]           = useState(false)
+
+  const salePriceNum = Number(salePrice)
+  const profit       = salePriceNum - item.costPrice
+  const hasPrice     = salePrice !== '' && salePriceNum > 0
+  const isLoss       = hasPrice && profit < 0
+
+  const profitDisplay = hasPrice
+    ? (profit >= 0 ? `+${zar.format(profit)}` : `-${zar.format(Math.abs(profit))}`)
+    : '—'
 
   function handleConfirm() {
+    const fields = { buyerName, buyerPhone, salePrice, paymentMethod }
+    const errs = validate(fields)
+    setErrors(errs)
+    setSubmitted(true)
+    if (Object.keys(errs).length > 0) return
     console.log({
       stockItemId: item.id,
       buyerName,
       buyerPhone: `+27${buyerPhone}`,
-      salePrice: Number(salePrice),
+      salePrice: salePriceNum,
       paymentMethod,
-      estimatedProfit: profit,
+      profit,
     })
   }
 
@@ -57,18 +89,22 @@ export default function SaleForm({ item }: { item: StockItem }) {
           type="text"
           placeholder="Enter buyer name..."
           value={buyerName}
-          onChange={(e) => setBuyerName(e.target.value)}
+          onChange={(e) => {
+            setBuyerName(e.target.value)
+            if (submitted) setErrors((p) => ({ ...p, buyerName: undefined }))
+          }}
           className="placeholder-[#555555] outline-none"
           style={{
             height: 44,
             background: '#111111',
-            border: '1px solid #222222',
+            border: submitted && errors.buyerName ? '1px solid #FF4444' : '1px solid #222222',
             borderRadius: 8,
             padding: '0 14px',
             color: '#FFFFFF',
             fontSize: 14,
           }}
         />
+        <FieldError msg={errors.buyerName} />
       </div>
 
       {/* Buyer Phone */}
@@ -79,7 +115,7 @@ export default function SaleForm({ item }: { item: StockItem }) {
           style={{
             height: 44,
             background: '#111111',
-            border: '1px solid #222222',
+            border: submitted && errors.buyerPhone ? '1px solid #FF4444' : '1px solid #222222',
             borderRadius: 8,
             padding: '0 14px',
           }}
@@ -89,16 +125,19 @@ export default function SaleForm({ item }: { item: StockItem }) {
             type="tel"
             placeholder="..."
             value={buyerPhone}
-            onChange={(e) => setBuyerPhone(e.target.value)}
+            onChange={(e) => {
+              setBuyerPhone(e.target.value)
+              if (submitted) setErrors((p) => ({ ...p, buyerPhone: undefined }))
+            }}
             className="flex-1 bg-transparent outline-none placeholder-[#555555] text-sm"
             style={{ color: '#FFFFFF' }}
           />
         </div>
+        <FieldError msg={errors.buyerPhone} />
       </div>
 
       {/* Sale Price + Payment Method */}
       <div className="grid grid-cols-2 gap-4">
-        {/* Sale Price */}
         <div className="flex flex-col gap-1.5">
           <label style={labelStyle}>Sale Price (ZAR)</label>
           <div
@@ -106,7 +145,7 @@ export default function SaleForm({ item }: { item: StockItem }) {
             style={{
               height: 44,
               background: '#111111',
-              border: '1px solid #222222',
+              border: submitted && errors.salePrice ? '1px solid #FF4444' : '1px solid #222222',
               borderRadius: 8,
               padding: '0 14px',
             }}
@@ -116,17 +155,27 @@ export default function SaleForm({ item }: { item: StockItem }) {
               type="number"
               placeholder="0.00"
               value={salePrice}
-              onChange={(e) => setSalePrice(e.target.value)}
+              onChange={(e) => {
+                setSalePrice(e.target.value)
+                if (submitted) setErrors((p) => ({ ...p, salePrice: undefined }))
+              }}
               className="flex-1 bg-transparent outline-none placeholder-[#555555] text-sm"
               style={{ color: '#FFFFFF' }}
+              min={0}
             />
           </div>
+          <FieldError msg={errors.salePrice} />
         </div>
 
-        {/* Payment Method */}
         <div className="flex flex-col gap-1.5">
           <label style={labelStyle}>Payment Method</label>
-          <Select value={paymentMethod} onValueChange={setPaymentMethod}>
+          <Select
+            value={paymentMethod}
+            onValueChange={(v) => {
+              setPaymentMethod(v)
+              if (submitted) setErrors((p) => ({ ...p, paymentMethod: undefined }))
+            }}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select method..." />
             </SelectTrigger>
@@ -136,20 +185,28 @@ export default function SaleForm({ item }: { item: StockItem }) {
               ))}
             </SelectContent>
           </Select>
+          <FieldError msg={errors.paymentMethod} />
         </div>
       </div>
 
-      {/* Estimated Profit banner */}
+      {/* Profit / Loss banner */}
       <div
         className="flex items-center justify-between rounded-lg"
         style={{
-          background: '#0D2B1A',
-          border: '1px solid #1A5C38',
+          background: isLoss ? '#2B0D0D' : '#0D2B1A',
+          border: `1px solid ${isLoss ? '#5C1A1A' : '#1A5C38'}`,
           padding: '16px 20px',
         }}
       >
-        <span style={{ color: '#888888', fontSize: 14, fontWeight: 500 }}>Estimated Profit</span>
-        <span style={{ color: '#00FF88', fontSize: 20, fontWeight: 800 }}>{formattedProfit}</span>
+        <div className="flex flex-col gap-0.5">
+          <span style={{ color: '#888888', fontSize: 14, fontWeight: 500 }}>Estimated Profit</span>
+          {isLoss && (
+            <span style={{ color: '#FF4444', fontSize: 12 }}>Selling below cost price</span>
+          )}
+        </div>
+        <span style={{ color: isLoss ? '#FF4444' : '#00FF88', fontSize: 20, fontWeight: 800 }}>
+          {profitDisplay}
+        </span>
       </div>
 
       {/* Buttons */}

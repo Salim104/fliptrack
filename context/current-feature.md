@@ -1,31 +1,38 @@
-# Current Feature: Sales History (/sales-history)
+# Current Feature: Clerk Authentication
 
 ## Feature File
-`context/features/05-sales-history.md`
+`context/features/06-clerk-auth.md`
 
 ## What to Build
-1. src/lib/mock-data.ts — add salesHistory array (7 rows matching Pencil design)
-2. src/components/sales/SummaryCards.tsx — 3 metric cards (Total Sales, Revenue, Profit)
-3. src/components/sales/SalesTable.tsx — full sales table with receipt icon per row
-4. src/app/(dashboard)/sales-history/page.tsx — page, composes both components
+1. middleware.ts — clerkMiddleware, protect all routes, public: /sign-in, /sign-up
+2. src/app/layout.tsx — wrap with ClerkProvider
+3. src/app/sign-in/[[...sign-in]]/page.tsx — Clerk SignIn component, dark centered page
+4. src/app/sign-up/[[...sign-up]]/page.tsx — Clerk SignUp component
+5. src/app/actions/users.ts — syncUser server action (upsert to Neon via Prisma)
+6. src/app/(dashboard)/layout.tsx — call syncUser on load, pass session to layout
+7. src/components/layout/Sidebar.tsx — replace hardcoded "SA" with real user initials
 
 ## Build Order
-Build in the order listed above — mock data first, then cards, then table, then page.
+Build in the order listed above — middleware first, then provider, then pages,
+then sync action, then layout, then sidebar update.
 
 ## Design Reference
-- Pencil file: context/pencil-designs/ — use the Sales History frame
-- 3 summary cards top: Total Sales / Total Revenue / Total Profit (profit in #00FF88)
-- Table: Date | Phone | Buyer | Sale Price | Profit | Receipt
-- Profit column per row in #00FF88
-- Receipt column: lucide Download icon, onClick logs row to console
-- "Export CSV" ghost button top-right with download icon
+- No Pencil design — Clerk hosted sign-in UI
+- Sign-in page: centered on #0A0A0A dark background, Clerk component in the middle
+- After sign-in: redirect to / (Dashboard)
 
 ## Notes
-- Frontend only — no Prisma, no Clerk, no API calls
-- No PDF or CSV generation in this phase — both are console stubs
-- Summary totals calculated from salesHistory array — not hardcoded
-- Do not replace existing mock-data.ts exports — only extend with salesHistory
-- Mobile: table wrapped in overflow-x-auto
+- Clerk env vars must be in .env.local (not .env):
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_...
+  CLERK_SECRET_KEY=sk_...
+  NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+  NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/
+- Get keys from Clerk Dashboard → Your App → API Keys
+- Google OAuth: enabled in Clerk Dashboard → Social Connections → Google (done manually)
+- Use clerkMiddleware from @clerk/nextjs/server (not deprecated authMiddleware)
+- syncUser uses upsert — safe to call on every dashboard load
+- currentUser() for server components, useUser() for client components
+- Do not build a custom sign-in form — use Clerk <SignIn /> component only
 
 ## Status
 `Not Started`

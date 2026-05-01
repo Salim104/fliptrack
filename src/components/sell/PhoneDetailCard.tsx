@@ -1,4 +1,5 @@
 import type { StockItem } from '@/src/lib/mock-data'
+import { zar } from '@/src/lib/format'
 
 const gradeLabel: Record<string, string> = {
   'Grade A': 'Excellent',
@@ -7,16 +8,12 @@ const gradeLabel: Record<string, string> = {
   'Grade D': 'Poor',
 }
 
-function formatCostPrice(price: number) {
-  return `R ${price.toLocaleString('en-ZA')}`
-}
-
 export default function PhoneDetailCard({ item }: { item: StockItem }) {
   const specs: { label: string; value: string; accent?: boolean }[] = [
     { label: 'Storage',    value: item.storage },
     { label: 'Condition',  value: gradeLabel[item.grade] ?? item.grade },
     { label: 'Color',      value: item.color },
-    { label: 'Cost Price', value: formatCostPrice(item.costPrice), accent: true },
+    { label: 'Cost Price', value: zar.format(item.costPrice), accent: true },
   ]
 
   return (

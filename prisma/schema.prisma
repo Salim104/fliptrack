@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+}
+
+enum Condition {
+  BRAND_NEW
+  LIKE_NEW
+  GOOD
+  FAIR
+  POOR
+}
+
+enum StockStatus {
+  IN_STOCK
+  SOLD
+}
+
+enum PaymentMethod {
+  CASH
+  EFT
+  SNAPSCAN
+  YOCO
+  OTHER
+}
+
+model User {
+  id         String      @id @default(cuid())
+  clerkId    String      @unique
+  name       String
+  email      String      @unique
+  role       Role        @default(ADMIN)
+  stockItems StockItem[]
+  sales      Sale[]
+  createdAt  DateTime    @default(now())
+}
+
+model StockItem {
+  id        String      @id @default(cuid())
+  model     String
+  storage   String
+  color     String
+  condition Condition
+  imei      String      @unique
+  costPrice Float
+  images    String[]
+  status    StockStatus @default(IN_STOCK)
+  addedBy   String
+  user      User        @relation(fields: [addedBy], references: [id])
+  sale      Sale?
+  createdAt DateTime    @default(now())
+}
+
+model Sale {
+  id            String        @id @default(cuid())
+  stockItemId   String        @unique
+  stockItem     StockItem     @relation(fields: [stockItemId], references: [id])
+  buyerName     String
+  buyerPhone    String
+  salePrice     Float
+  paymentMethod PaymentMethod
+  images        String[]
+  soldBy        String
+  user          User          @relation(fields: [soldBy], references: [id])
+  createdAt     DateTime      @default(now())
+}

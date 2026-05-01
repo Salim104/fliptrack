@@ -46,100 +46,141 @@ const inputStyle: React.CSSProperties = {
   width: '100%',
 }
 
+const inputErrorStyle: React.CSSProperties = {
+  ...inputStyle,
+  border: '1px solid #FF4444',
+}
+
+function FieldError({ msg }: { msg?: string }) {
+  if (!msg) return null
+  return <span style={{ color: '#FF4444', fontSize: 12 }}>{msg}</span>
+}
+
+function validate(fields: {
+  model: string; storage: string; color: string; condition: string
+  imei: string; costPrice: string
+}) {
+  const errors: Partial<Record<keyof typeof fields, string>> = {}
+  if (!fields.model)     errors.model     = 'Phone model is required'
+  if (!fields.storage)   errors.storage   = 'Storage is required'
+  if (!fields.color)     errors.color     = 'Color is required'
+  if (!fields.condition) errors.condition = 'Condition is required'
+  if (!fields.imei.trim()) {
+    errors.imei = 'IMEI is required'
+  } else if (!/^\d{15}$/.test(fields.imei.trim())) {
+    errors.imei = 'IMEI must be exactly 15 digits'
+  }
+  const price = Number(fields.costPrice)
+  if (!fields.costPrice) {
+    errors.costPrice = 'Cost price is required'
+  } else if (isNaN(price) || price <= 0) {
+    errors.costPrice = 'Enter a valid price greater than 0'
+  }
+  return errors
+}
+
 export default function AddStockForm() {
-  const [model, setModel] = useState('')
-  const [storage, setStorage] = useState('')
-  const [color, setColor] = useState('')
+  const [model, setModel]         = useState('')
+  const [storage, setStorage]     = useState('')
+  const [color, setColor]         = useState('')
   const [condition, setCondition] = useState('')
-  const [imei, setImei] = useState('')
+  const [imei, setImei]           = useState('')
   const [costPrice, setCostPrice] = useState('')
+  const [errors, setErrors]       = useState<Partial<Record<string, string>>>({})
+  const [submitted, setSubmitted] = useState(false)
 
   function handleSubmit() {
-    console.log({ model, storage, color, condition, imei, costPrice })
+    const fields = { model, storage, color, condition, imei, costPrice }
+    const errs = validate(fields)
+    setErrors(errs)
+    setSubmitted(true)
+    if (Object.keys(errs).length > 0) return
+    console.log({ model, storage, color, condition, imei, costPrice: Number(costPrice) })
   }
+
+  const hasErrors = submitted && Object.keys(errors).length > 0
 
   return (
     <div
       className="flex flex-col gap-6 rounded-xl"
       style={{ background: '#1A1A1A', border: '1px solid #222222', padding: 32 }}
     >
-      {/* Two-column: upload + fields */}
       <div className="flex flex-col lg:flex-row gap-6">
         <PhotoUploadZone />
 
-        {/* Fields column */}
         <div className="flex-1 flex flex-col gap-4">
           {/* Phone Model */}
           <div className="flex flex-col gap-1.5">
             <label style={labelStyle}>Phone Model</label>
-            <Select value={model} onValueChange={setModel}>
+            <Select value={model} onValueChange={(v) => { setModel(v); if (submitted) setErrors((e) => ({ ...e, model: undefined })) }}>
               <SelectTrigger>
                 <SelectValue placeholder="Select model..." />
               </SelectTrigger>
               <SelectContent>
-                {MODELS.map((m) => (
-                  <SelectItem key={m} value={m}>{m}</SelectItem>
-                ))}
+                {MODELS.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
               </SelectContent>
             </Select>
+            <FieldError msg={errors.model} />
           </div>
 
-          {/* Storage Capacity */}
+          {/* Storage */}
           <div className="flex flex-col gap-1.5">
             <label style={labelStyle}>Storage Capacity</label>
-            <Select value={storage} onValueChange={setStorage}>
+            <Select value={storage} onValueChange={(v) => { setStorage(v); if (submitted) setErrors((e) => ({ ...e, storage: undefined })) }}>
               <SelectTrigger>
                 <SelectValue placeholder="Select storage..." />
               </SelectTrigger>
               <SelectContent>
-                {STORAGE_OPTIONS.map((s) => (
-                  <SelectItem key={s} value={s}>{s}</SelectItem>
-                ))}
+                {STORAGE_OPTIONS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
               </SelectContent>
             </Select>
+            <FieldError msg={errors.storage} />
           </div>
 
-          {/* Color + Condition side by side */}
+          {/* Color + Condition */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label style={labelStyle}>Color</label>
-              <Select value={color} onValueChange={setColor}>
+              <Select value={color} onValueChange={(v) => { setColor(v); if (submitted) setErrors((e) => ({ ...e, color: undefined })) }}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select color..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {COLORS.map((c) => (
-                    <SelectItem key={c} value={c}>{c}</SelectItem>
-                  ))}
+                  {COLORS.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                 </SelectContent>
               </Select>
+              <FieldError msg={errors.color} />
             </div>
             <div className="flex flex-col gap-1.5">
               <label style={labelStyle}>Condition</label>
-              <Select value={condition} onValueChange={setCondition}>
+              <Select value={condition} onValueChange={(v) => { setCondition(v); if (submitted) setErrors((e) => ({ ...e, condition: undefined })) }}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select condition..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {CONDITIONS.map((c) => (
-                    <SelectItem key={c} value={c}>{c}</SelectItem>
-                  ))}
+                  {CONDITIONS.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                 </SelectContent>
               </Select>
+              <FieldError msg={errors.condition} />
             </div>
           </div>
 
-          {/* IMEI Number */}
+          {/* IMEI */}
           <div className="flex flex-col gap-1.5">
             <label style={labelStyle}>IMEI Number</label>
             <input
               type="text"
-              placeholder="Enter IMEI number..."
+              placeholder="15-digit IMEI..."
               value={imei}
-              onChange={(e) => setImei(e.target.value)}
-              style={inputStyle}
+              onChange={(e) => {
+                setImei(e.target.value)
+                if (submitted) setErrors((e2) => ({ ...e2, imei: undefined }))
+              }}
+              style={submitted && errors.imei ? inputErrorStyle : inputStyle}
               className="placeholder-[#555555]"
+              maxLength={15}
             />
+            <FieldError msg={errors.imei} />
           </div>
 
           {/* Cost Price */}
@@ -150,38 +191,39 @@ export default function AddStockForm() {
               style={{
                 height: 44,
                 background: '#111111',
-                border: '1px solid #222222',
+                border: submitted && errors.costPrice ? '1px solid #FF4444' : '1px solid #222222',
                 borderRadius: 8,
                 padding: '0 14px',
               }}
             >
-              <span style={{ color: '#888888', fontWeight: 600, fontSize: 14, flexShrink: 0 }}>
-                R
-              </span>
+              <span style={{ color: '#888888', fontWeight: 600, fontSize: 14, flexShrink: 0 }}>R</span>
               <input
                 type="number"
                 placeholder="0.00"
                 value={costPrice}
-                onChange={(e) => setCostPrice(e.target.value)}
+                onChange={(e) => {
+                  setCostPrice(e.target.value)
+                  if (submitted) setErrors((e2) => ({ ...e2, costPrice: undefined }))
+                }}
                 className="flex-1 bg-transparent outline-none placeholder-[#555555] text-sm"
                 style={{ color: '#FFFFFF' }}
+                min={0}
               />
             </div>
+            <FieldError msg={errors.costPrice} />
           </div>
         </div>
       </div>
 
-      {/* Button row */}
+      {hasErrors && (
+        <p style={{ color: '#FF4444', fontSize: 13 }}>Please fix the errors above before submitting.</p>
+      )}
+
       <div className="flex items-center justify-end gap-3">
         <Link
           href="/inventory"
           className="flex items-center justify-center rounded-lg text-sm font-semibold"
-          style={{
-            height: 44,
-            padding: '0 24px',
-            border: '1px solid #222222',
-            color: '#888888',
-          }}
+          style={{ height: 44, padding: '0 24px', border: '1px solid #222222', color: '#888888' }}
         >
           Cancel
         </Link>
@@ -189,12 +231,7 @@ export default function AddStockForm() {
           type="button"
           onClick={handleSubmit}
           className="flex items-center justify-center gap-2 rounded-lg text-sm font-bold"
-          style={{
-            height: 44,
-            padding: '0 32px',
-            background: '#00FF88',
-            color: '#0A0A0A',
-          }}
+          style={{ height: 44, padding: '0 32px', background: '#00FF88', color: '#0A0A0A' }}
         >
           <Plus size={16} color="#0A0A0A" />
           Add to Stock

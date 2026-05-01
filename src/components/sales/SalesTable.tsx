@@ -2,12 +2,7 @@
 
 import { Download } from 'lucide-react'
 import { type SaleRecord } from '@/src/lib/mock-data'
-
-const fmt = new Intl.NumberFormat('en-ZA', {
-  style: 'currency',
-  currency: 'ZAR',
-  minimumFractionDigits: 0,
-})
+import { zar } from '@/src/lib/format'
 
 interface SalesTableProps {
   sales: SaleRecord[]
@@ -34,6 +29,11 @@ export default function SalesTable({ sales }: SalesTableProps) {
         </div>
 
         {/* Rows */}
+        {sales.length === 0 ? (
+          <div className="flex items-center justify-center py-16">
+            <p className="text-sm" style={{ color: '#888888' }}>No sales recorded yet</p>
+          </div>
+        ) : null}
         {sales.map((sale, i) => {
           const profit = sale.salePrice - sale.costPrice
           const isLast = i === sales.length - 1
@@ -50,9 +50,9 @@ export default function SalesTable({ sales }: SalesTableProps) {
               <span className="w-40 text-sm shrink-0" style={{ color: '#888888' }}>{sale.date}</span>
               <span className="flex-1 text-sm text-white">{sale.phone}</span>
               <span className="flex-1 text-sm text-white">{sale.buyer}</span>
-              <span className="w-28 text-sm font-semibold text-white shrink-0">{fmt.format(sale.salePrice)}</span>
+              <span className="w-28 text-sm font-semibold text-white shrink-0">{zar.format(sale.salePrice)}</span>
               <span className="w-24 text-sm font-semibold shrink-0" style={{ color: '#00FF88' }}>
-                +{fmt.format(profit)}
+                +{zar.format(profit)}
               </span>
               <span className="w-20 shrink-0">
                 <button

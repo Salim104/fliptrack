@@ -2,22 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import {
-  Smartphone,
-  LayoutDashboard,
-  Package,
-  CirclePlus,
-  ShoppingCart,
-  FileText,
-} from 'lucide-react'
-
-const navItems = [
-  { label: 'Dashboard',     href: '/',              icon: LayoutDashboard },
-  { label: 'Inventory',     href: '/inventory',     icon: Package },
-  { label: 'Add Stock',     href: '/add-stock',     icon: CirclePlus },
-  { label: 'Sell',          href: '/sell',          icon: ShoppingCart },
-  { label: 'Sales History', href: '/sales-history', icon: FileText },
-]
+import { Smartphone } from 'lucide-react'
+import { navItems } from '@/src/lib/nav'
 
 export default function Sidebar() {
   const pathname = usePathname()

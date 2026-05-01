@@ -1,10 +1,5 @@
 import { type SaleRecord } from '@/src/lib/mock-data'
-
-const fmt = new Intl.NumberFormat('en-ZA', {
-  style: 'currency',
-  currency: 'ZAR',
-  minimumFractionDigits: 0,
-})
+import { zar } from '@/src/lib/format'
 
 interface SummaryCardsProps {
   sales: SaleRecord[]
@@ -17,8 +12,8 @@ export default function SummaryCards({ sales }: SummaryCardsProps) {
 
   const cards = [
     { label: 'Total Sales', value: String(totalSales), green: false },
-    { label: 'Total Revenue', value: fmt.format(totalRevenue), green: false },
-    { label: 'Total Profit', value: fmt.format(totalProfit), green: true },
+    { label: 'Total Revenue', value: zar.format(totalRevenue), green: false },
+    { label: 'Total Profit', value: zar.format(totalProfit), green: true },
   ]
 
   return (

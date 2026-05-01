@@ -3,11 +3,28 @@
 :root {
   --background: #0a0a0a;
   --foreground: #ffffff;
+  --bg-card: #1a1a1a;
+  --bg-sunken: #111111;
+  --border: #222222;
+  --text-muted: #888888;
+  --text-dim: #555555;
+  --accent: #00ff88;
+  --accent-dim: #00ff8818;
+  --accent-dark: #1a5c38;
+  --danger: #ff4444;
+  --danger-dim: #ff444418;
+  --danger-dark: #5c1a1a;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--bg-card);
+  --color-sunken: var(--bg-sunken);
+  --color-border: var(--border);
+  --color-muted: var(--text-muted);
+  --color-dim: var(--text-dim);
+  --color-accent: var(--accent);
   --font-sans: var(--font-inter);
 }
 

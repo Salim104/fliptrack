@@ -1,11 +1,7 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import type { StockItem } from '@/src/lib/mock-data'
-
-const fmt = new Intl.NumberFormat('en-ZA', {
-  style: 'currency',
-  currency: 'ZAR',
-  minimumFractionDigits: 0,
-})
+import { zar } from '@/src/lib/format'
 
 export default function StockCard({ item }: { item: StockItem }) {
   const isInStock = item.status === 'IN_STOCK'
@@ -36,7 +32,7 @@ export default function StockCard({ item }: { item: StockItem }) {
         {/* Price + badge */}
         <div className="flex items-center justify-between">
           <span className="text-base font-bold" style={{ color: '#00FF88' }}>
-            {fmt.format(item.costPrice)}
+            {zar.format(item.costPrice)}
           </span>
 
           {isInStock ? (
@@ -63,6 +59,17 @@ export default function StockCard({ item }: { item: StockItem }) {
             </span>
           )}
         </div>
+
+        {/* Sell button — only for in-stock items */}
+        {isInStock && (
+          <Link
+            href={`/sell?id=${item.id}`}
+            className="flex items-center justify-center rounded-lg text-sm font-bold mt-1"
+            style={{ height: 36, background: '#00FF88', color: '#0A0A0A' }}
+          >
+            Sell
+          </Link>
+        )}
       </div>
     </div>
   )
