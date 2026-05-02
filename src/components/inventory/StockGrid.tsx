@@ -3,19 +3,19 @@
 import { useState } from 'react'
 import { Search, Plus } from 'lucide-react'
 import Link from 'next/link'
-import { stockItems } from '@/src/lib/mock-data'
+import type { StockItem } from '@prisma/client'
 import StockCard from './StockCard'
 
-export default function StockGrid() {
+export default function StockGrid({ items }: { items: StockItem[] }) {
   const [query, setQuery] = useState('')
 
-  const inStockCount = stockItems.filter((i) => i.status === 'IN_STOCK').length
+  const inStockCount = items.filter((i) => i.status === 'IN_STOCK').length
 
   const filtered = query.trim()
-    ? stockItems.filter((i) =>
+    ? items.filter((i) =>
         i.model.toLowerCase().includes(query.toLowerCase())
       )
-    : stockItems
+    : items
 
   return (
     <div className="flex flex-col gap-6">

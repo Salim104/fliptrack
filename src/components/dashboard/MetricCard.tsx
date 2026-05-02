@@ -29,7 +29,7 @@ export default function MetricCard({ label, value, delta, icon: Icon }: MetricCa
       </div>
 
       {/* Value */}
-      <span className="text-4xl font-bold text-white leading-none">{value}</span>
+      <span className="font-bold text-white leading-none" style={{ fontSize: 'clamp(1.25rem, 4vw, 2rem)' }}>{value}</span>
 
       {/* Delta */}
       <span className="text-xs" style={{ color: '#00FF88' }}>{delta}</span>

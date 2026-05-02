@@ -1,3 +1,4 @@
+
 import { Package, ShoppingCart, DollarSign, TrendingUp } from 'lucide-react'
 import TopBar from '@/src/components/layout/TopBar'
 import MetricCard from '@/src/components/dashboard/MetricCard'

@@ -1,5 +1,12 @@
 import { PrismaClient } from '@prisma/client'
 import { PrismaNeon } from '@prisma/adapter-neon'
+import { neonConfig } from '@neondatabase/serverless'
+import ws from 'ws'
+
+// Node.js v22+ has a native WebSocket global, but it fires ErrorEvent objects
+// on failure instead of Error objects. The ws package fires proper Errors,
+// which prevents Next.js from surfacing "Error: [object ErrorEvent]" at runtime.
+neonConfig.webSocketConstructor = ws
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
 

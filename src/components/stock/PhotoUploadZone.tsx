@@ -14,6 +14,12 @@ export default function PhotoUploadZone({ images, onUpload, onRemove }: Props) {
     <div className="w-full aspect-square lg:w-60 lg:h-60 lg:aspect-auto flex-shrink-0">
       <CldUploadWidget
         uploadPreset="fliptrack"
+        options={{
+          sources: ['local'],
+          multiple: false,
+          showSkipCropButton: false,
+          cropping: false,
+        }}
         onSuccess={(result) => {
           const info = result.info as { public_id: string }
           if (info?.public_id) onUpload(info.public_id)

@@ -1,7 +1,16 @@
-import Image from 'next/image'
 import Link from 'next/link'
-import type { StockItem } from '@/src/lib/mock-data'
+import { Smartphone } from 'lucide-react'
+import { CldImage } from 'next-cloudinary'
+import type { StockItem } from '@prisma/client'
 import { zar } from '@/src/lib/format'
+
+const conditionLabel: Record<string, string> = {
+  BRAND_NEW: 'Brand New',
+  LIKE_NEW: 'Like New',
+  GOOD: 'Good',
+  FAIR: 'Fair',
+  POOR: 'Poor',
+}
 
 export default function StockCard({ item }: { item: StockItem }) {
   const isInStock = item.status === 'IN_STOCK'
@@ -12,21 +21,25 @@ export default function StockCard({ item }: { item: StockItem }) {
       style={{ background: '#1A1A1A', border: '1px solid #222222' }}
     >
       {/* Photo */}
-      <div className="relative" style={{ height: 160 }}>
-        <Image
-          src={item.imageUrl}
-          alt={item.model}
-          fill
-          className="object-cover"
-          sizes="(max-width: 1024px) 50vw, 25vw"
-        />
+      <div className="relative flex items-center justify-center" style={{ height: 160, background: '#111111' }}>
+        {item.images.length > 0 ? (
+          <CldImage
+            src={item.images[0]}
+            width={400}
+            height={300}
+            alt={item.model}
+            className="object-cover w-full h-full"
+          />
+        ) : (
+          <Smartphone size={48} color="#333333" />
+        )}
       </div>
 
       {/* Info */}
       <div className="flex flex-col gap-2" style={{ padding: 16 }}>
         <span className="text-sm font-semibold text-white">{item.model}</span>
         <span className="text-xs" style={{ color: '#888888' }}>
-          {item.storage} · {item.color} · {item.grade}
+          {item.storage} · {item.color} · {conditionLabel[item.condition]}
         </span>
 
         {/* Price + badge */}
