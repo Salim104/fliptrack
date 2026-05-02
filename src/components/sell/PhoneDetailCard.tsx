@@ -1,17 +1,22 @@
-import type { StockItem } from '@/src/lib/mock-data'
+'use client'
+
+import type { StockItem } from '@prisma/client'
+import { CldImage } from 'next-cloudinary'
+import { Smartphone } from 'lucide-react'
 import { zar } from '@/src/lib/format'
 
-const gradeLabel: Record<string, string> = {
-  'Grade A': 'Excellent',
-  'Grade B': 'Good',
-  'Grade C': 'Fair',
-  'Grade D': 'Poor',
+const conditionLabel: Record<string, string> = {
+  BRAND_NEW: 'Brand New',
+  LIKE_NEW:  'Like New',
+  GOOD:      'Good',
+  FAIR:      'Fair',
+  POOR:      'Poor',
 }
 
 export default function PhoneDetailCard({ item }: { item: StockItem }) {
   const specs: { label: string; value: string; accent?: boolean }[] = [
     { label: 'Storage',    value: item.storage },
-    { label: 'Condition',  value: gradeLabel[item.grade] ?? item.grade },
+    { label: 'Condition',  value: conditionLabel[item.condition] ?? item.condition },
     { label: 'Color',      value: item.color },
     { label: 'Cost Price', value: zar.format(item.costPrice), accent: true },
   ]
@@ -22,12 +27,22 @@ export default function PhoneDetailCard({ item }: { item: StockItem }) {
       style={{ background: '#1A1A1A', border: '1px solid #222222', padding: 24 }}
     >
       {/* Phone image */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={item.imageUrl}
-        alt={item.model}
-        style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 8, display: 'block' }}
-      />
+      {item.images.length > 0 ? (
+        <CldImage
+          src={item.images[0]}
+          alt={item.model}
+          width={320}
+          height={200}
+          style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 8, display: 'block' }}
+        />
+      ) : (
+        <div
+          className="flex items-center justify-center"
+          style={{ width: '100%', height: 200, background: '#111111', borderRadius: 8 }}
+        >
+          <Smartphone size={64} color="#333333" />
+        </div>
+      )}
 
       {/* Model name */}
       <h2 style={{ fontSize: 18, fontWeight: 700, color: '#FFFFFF' }}>{item.model}</h2>

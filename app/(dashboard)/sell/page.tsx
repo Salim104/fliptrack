@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { stockItems } from '@/src/lib/mock-data'
+import { prisma } from '@/src/lib/db'
 import TopBar from '@/src/components/layout/TopBar'
 import PhoneDetailCard from '@/src/components/sell/PhoneDetailCard'
 import SaleForm from '@/src/components/sell/SaleForm'
@@ -11,10 +11,10 @@ export default async function SellPage({
   searchParams: Promise<{ id?: string }>
 }) {
   const { id } = await searchParams
-  const item = (id ? stockItems.find((i) => i.id === id) : null)
-    ?? stockItems.find((i) => i.status === 'IN_STOCK')
+  if (!id) redirect('/inventory')
 
-  if (!item) redirect('/inventory')
+  const item = await prisma.stockItem.findUnique({ where: { id } })
+  if (!item || item.status === 'SOLD') redirect('/inventory')
 
   return (
     <div className="flex flex-col gap-8 p-6 lg:p-10">

@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { Check } from 'lucide-react'
-import type { StockItem } from '@/src/lib/mock-data'
+import { toast } from 'sonner'
+import type { StockItem } from '@prisma/client'
 import { zar } from '@/src/lib/format'
+import { recordSale } from '@/app/actions/sales'
 import {
   Select,
   SelectTrigger,
@@ -13,7 +15,13 @@ import {
   SelectItem,
 } from '@/src/components/ui/select'
 
-const PAYMENT_METHODS = ['Cash', 'EFT', 'SnapScan', 'Yoco', 'Other']
+const PAYMENT_METHODS = [
+  { value: 'CASH',     label: 'Cash' },
+  { value: 'EFT',      label: 'EFT' },
+  { value: 'SNAPSCAN', label: 'SnapScan' },
+  { value: 'YOCO',     label: 'Yoco' },
+  { value: 'OTHER',    label: 'Other' },
+]
 
 const labelStyle: React.CSSProperties = {
   color: '#888888',
@@ -43,12 +51,12 @@ function validate(fields: {
 }
 
 export default function SaleForm({ item }: { item: StockItem }) {
-  const [buyerName, setBuyerName]           = useState('')
-  const [buyerPhone, setBuyerPhone]         = useState('')
-  const [salePrice, setSalePrice]           = useState('')
-  const [paymentMethod, setPaymentMethod]   = useState('')
-  const [errors, setErrors]                 = useState<Partial<Record<string, string>>>({})
-  const [submitted, setSubmitted]           = useState(false)
+  const [buyerName, setBuyerName]         = useState('')
+  const [buyerPhone, setBuyerPhone]       = useState('')
+  const [salePrice, setSalePrice]         = useState('')
+  const [paymentMethod, setPaymentMethod] = useState('')
+  const [errors, setErrors]               = useState<Partial<Record<string, string>>>({})
+  const [isPending, startTransition]      = useTransition()
 
   const salePriceNum = Number(salePrice)
   const profit       = salePriceNum - item.costPrice
@@ -63,15 +71,17 @@ export default function SaleForm({ item }: { item: StockItem }) {
     const fields = { buyerName, buyerPhone, salePrice, paymentMethod }
     const errs = validate(fields)
     setErrors(errs)
-    setSubmitted(true)
     if (Object.keys(errs).length > 0) return
-    console.log({
-      stockItemId: item.id,
-      buyerName,
-      buyerPhone: `+27${buyerPhone}`,
-      salePrice: salePriceNum,
-      paymentMethod,
-      profit,
+
+    startTransition(async () => {
+      const result = await recordSale({
+        stockItemId:   item.id,
+        buyerName,
+        buyerPhone:    `+27${buyerPhone}`,
+        salePrice,
+        paymentMethod,
+      })
+      if (result?.error) toast.error(result.error)
     })
   }
 
@@ -91,13 +101,13 @@ export default function SaleForm({ item }: { item: StockItem }) {
           value={buyerName}
           onChange={(e) => {
             setBuyerName(e.target.value)
-            if (submitted) setErrors((p) => ({ ...p, buyerName: undefined }))
+            setErrors((p) => ({ ...p, buyerName: undefined }))
           }}
           className="placeholder-[#555555] outline-none"
           style={{
             height: 44,
             background: '#111111',
-            border: submitted && errors.buyerName ? '1px solid #FF4444' : '1px solid #222222',
+            border: errors.buyerName ? '1px solid #FF4444' : '1px solid #222222',
             borderRadius: 8,
             padding: '0 14px',
             color: '#FFFFFF',
@@ -115,7 +125,7 @@ export default function SaleForm({ item }: { item: StockItem }) {
           style={{
             height: 44,
             background: '#111111',
-            border: submitted && errors.buyerPhone ? '1px solid #FF4444' : '1px solid #222222',
+            border: errors.buyerPhone ? '1px solid #FF4444' : '1px solid #222222',
             borderRadius: 8,
             padding: '0 14px',
           }}
@@ -127,7 +137,7 @@ export default function SaleForm({ item }: { item: StockItem }) {
             value={buyerPhone}
             onChange={(e) => {
               setBuyerPhone(e.target.value)
-              if (submitted) setErrors((p) => ({ ...p, buyerPhone: undefined }))
+              setErrors((p) => ({ ...p, buyerPhone: undefined }))
             }}
             className="flex-1 bg-transparent outline-none placeholder-[#555555] text-sm"
             style={{ color: '#FFFFFF' }}
@@ -145,7 +155,7 @@ export default function SaleForm({ item }: { item: StockItem }) {
             style={{
               height: 44,
               background: '#111111',
-              border: submitted && errors.salePrice ? '1px solid #FF4444' : '1px solid #222222',
+              border: errors.salePrice ? '1px solid #FF4444' : '1px solid #222222',
               borderRadius: 8,
               padding: '0 14px',
             }}
@@ -157,7 +167,7 @@ export default function SaleForm({ item }: { item: StockItem }) {
               value={salePrice}
               onChange={(e) => {
                 setSalePrice(e.target.value)
-                if (submitted) setErrors((p) => ({ ...p, salePrice: undefined }))
+                setErrors((p) => ({ ...p, salePrice: undefined }))
               }}
               className="flex-1 bg-transparent outline-none placeholder-[#555555] text-sm"
               style={{ color: '#FFFFFF' }}
@@ -173,7 +183,7 @@ export default function SaleForm({ item }: { item: StockItem }) {
             value={paymentMethod}
             onValueChange={(v) => {
               setPaymentMethod(v)
-              if (submitted) setErrors((p) => ({ ...p, paymentMethod: undefined }))
+              setErrors((p) => ({ ...p, paymentMethod: undefined }))
             }}
           >
             <SelectTrigger>
@@ -181,7 +191,7 @@ export default function SaleForm({ item }: { item: StockItem }) {
             </SelectTrigger>
             <SelectContent>
               {PAYMENT_METHODS.map((m) => (
-                <SelectItem key={m} value={m}>{m}</SelectItem>
+                <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -221,11 +231,19 @@ export default function SaleForm({ item }: { item: StockItem }) {
         <button
           type="button"
           onClick={handleConfirm}
+          disabled={isPending}
           className="flex items-center justify-center gap-2 rounded-lg text-sm font-bold"
-          style={{ height: 44, padding: '0 32px', background: '#00FF88', color: '#0A0A0A' }}
+          style={{
+            height: 44,
+            padding: '0 32px',
+            background: isPending ? '#00CC6A' : '#00FF88',
+            color: '#0A0A0A',
+            opacity: isPending ? 0.8 : 1,
+            cursor: isPending ? 'not-allowed' : 'pointer',
+          }}
         >
           <Check size={16} color="#0A0A0A" />
-          Confirm Sale
+          {isPending ? 'Confirming...' : 'Confirm Sale'}
         </button>
       </div>
     </div>
