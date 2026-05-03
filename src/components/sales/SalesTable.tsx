@@ -1,11 +1,11 @@
 'use client'
 
-import { Download } from 'lucide-react'
-import { type SaleRecord } from '@/src/lib/mock-data'
+import type { Sale, StockItem } from '@prisma/client'
 import { zar } from '@/src/lib/format'
+import DownloadReceiptButton from './DownloadReceiptButton'
 
 interface SalesTableProps {
-  sales: SaleRecord[]
+  sales: (Sale & { stockItem: StockItem })[]
 }
 
 export default function SalesTable({ sales }: SalesTableProps) {
@@ -35,8 +35,13 @@ export default function SalesTable({ sales }: SalesTableProps) {
           </div>
         ) : null}
         {sales.map((sale, i) => {
-          const profit = sale.salePrice - sale.costPrice
+          const profit = sale.salePrice - sale.stockItem.costPrice
           const isLast = i === sales.length - 1
+          const date = new Date(sale.createdAt).toLocaleDateString('en-ZA', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+          })
           return (
             <div
               key={sale.id}
@@ -47,21 +52,15 @@ export default function SalesTable({ sales }: SalesTableProps) {
                 borderBottom: isLast ? 'none' : '1px solid #222222',
               }}
             >
-              <span className="w-40 text-sm shrink-0" style={{ color: '#888888' }}>{sale.date}</span>
-              <span className="flex-1 text-sm text-white">{sale.phone}</span>
-              <span className="flex-1 text-sm text-white">{sale.buyer}</span>
+              <span className="w-40 text-sm shrink-0" style={{ color: '#888888' }}>{date}</span>
+              <span className="flex-1 text-sm text-white">{sale.stockItem.model} {sale.stockItem.storage}</span>
+              <span className="flex-1 text-sm text-white">{sale.buyerName}</span>
               <span className="w-28 text-sm font-semibold text-white shrink-0">{zar.format(sale.salePrice)}</span>
               <span className="w-24 text-sm font-semibold shrink-0" style={{ color: '#00FF88' }}>
                 +{zar.format(profit)}
               </span>
               <span className="w-20 shrink-0">
-                <button
-                  onClick={() => console.log('Receipt:', sale)}
-                  className="flex items-center justify-center rounded"
-                  style={{ width: 32, height: 32 }}
-                >
-                  <Download size={16} color="#888888" />
-                </button>
+                <DownloadReceiptButton sale={sale} />
               </span>
             </div>
           )

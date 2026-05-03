@@ -1,14 +1,14 @@
-import { type SaleRecord } from '@/src/lib/mock-data'
+import type { Sale, StockItem } from '@prisma/client'
 import { zar } from '@/src/lib/format'
 
 interface SummaryCardsProps {
-  sales: SaleRecord[]
+  sales: (Sale & { stockItem: StockItem })[]
 }
 
 export default function SummaryCards({ sales }: SummaryCardsProps) {
   const totalSales = sales.length
   const totalRevenue = sales.reduce((sum, s) => sum + s.salePrice, 0)
-  const totalProfit = sales.reduce((sum, s) => sum + (s.salePrice - s.costPrice), 0)
+  const totalProfit = sales.reduce((sum, s) => sum + (s.salePrice - s.stockItem.costPrice), 0)
 
   const cards = [
     { label: 'Total Sales', value: String(totalSales), green: false },
