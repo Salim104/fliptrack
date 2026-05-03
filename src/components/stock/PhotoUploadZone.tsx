@@ -30,16 +30,16 @@ export default function PhotoUploadZone({ images, onUpload, onRemove }: Props) {
             <div
               onClick={() => open()}
               className="w-full h-full flex flex-col items-center justify-center gap-3 rounded-xl cursor-pointer"
-              style={{ background: '#111111', border: '1px solid #222222' }}
+              style={{ background: 'var(--bg-sunken)', border: '1px solid var(--border)' }}
             >
-              <Camera size={40} color="#888888" />
-              <span style={{ color: '#888888', fontSize: 14, fontWeight: 500 }}>Upload Photo</span>
-              <span style={{ color: '#888888', fontSize: 12, opacity: 0.6 }}>Click or drag image here</span>
+              <Camera size={40} color="var(--text-muted)" />
+              <span style={{ color: 'var(--text-muted)', fontSize: 14, fontWeight: 500 }}>Upload Photo</span>
+              <span style={{ color: 'var(--text-muted)', fontSize: 12, opacity: 0.6 }}>Click or drag image here</span>
             </div>
           ) : (
             <div
               className="relative w-full h-full rounded-xl overflow-hidden"
-              style={{ background: '#111111' }}
+              style={{ background: 'var(--bg-sunken)' }}
             >
               <CldImage
                 src={images[0]}

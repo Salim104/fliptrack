@@ -31,18 +31,18 @@ const COLORS = [
 const CONDITIONS = ['Brand New', 'Like New', 'Good', 'Fair', 'Poor']
 
 const labelStyle: React.CSSProperties = {
-  color: '#888888',
+  color: 'var(--text-muted)',
   fontSize: 13,
   fontWeight: 600,
 }
 
 const inputStyle: React.CSSProperties = {
   height: 44,
-  background: '#111111',
-  border: '1px solid #222222',
+  background: 'var(--bg-sunken)',
+  border: '1px solid var(--border)',
   borderRadius: 8,
   padding: '0 14px',
-  color: '#FFFFFF',
+  color: 'var(--foreground)',
   fontSize: 14,
   outline: 'none',
   width: '100%',
@@ -50,12 +50,12 @@ const inputStyle: React.CSSProperties = {
 
 const inputErrorStyle: React.CSSProperties = {
   ...inputStyle,
-  border: '1px solid #FF4444',
+  border: '1px solid var(--danger)',
 }
 
 function FieldError({ msg }: { msg?: string }) {
   if (!msg) return null
-  return <span style={{ color: '#FF4444', fontSize: 12 }}>{msg}</span>
+  return <span style={{ color: 'var(--danger)', fontSize: 12 }}>{msg}</span>
 }
 
 function validate(fields: {
@@ -121,7 +121,7 @@ export default function AddStockForm() {
   return (
     <div
       className="flex flex-col gap-6 rounded-xl"
-      style={{ background: '#1A1A1A', border: '1px solid #222222', padding: 32 }}
+      style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: 32 }}
     >
       <div className="flex flex-col lg:flex-row gap-6">
         <PhotoUploadZone images={images} onUpload={handleUpload} onRemove={handleRemove} />
@@ -208,13 +208,13 @@ export default function AddStockForm() {
               className="flex items-center gap-2"
               style={{
                 height: 44,
-                background: '#111111',
-                border: submitted && errors.costPrice ? '1px solid #FF4444' : '1px solid #222222',
+                background: 'var(--bg-sunken)',
+                border: submitted && errors.costPrice ? '1px solid var(--danger)' : '1px solid var(--border)',
                 borderRadius: 8,
                 padding: '0 14px',
               }}
             >
-              <span style={{ color: '#888888', fontWeight: 600, fontSize: 14, flexShrink: 0 }}>R</span>
+              <span style={{ color: 'var(--text-muted)', fontWeight: 600, fontSize: 14, flexShrink: 0 }}>R</span>
               <input
                 type="number"
                 placeholder="0.00"
@@ -224,7 +224,7 @@ export default function AddStockForm() {
                   if (submitted) setErrors((e2) => ({ ...e2, costPrice: undefined }))
                 }}
                 className="flex-1 bg-transparent outline-none placeholder-[#555555] text-sm"
-                style={{ color: '#FFFFFF' }}
+                style={{ color: 'var(--foreground)' }}
                 min={0}
               />
             </div>
@@ -234,14 +234,14 @@ export default function AddStockForm() {
       </div>
 
       {hasErrors && (
-        <p style={{ color: '#FF4444', fontSize: 13 }}>Please fix the errors above before submitting.</p>
+        <p style={{ color: 'var(--danger)', fontSize: 13 }}>Please fix the errors above before submitting.</p>
       )}
 
       <div className="flex items-center justify-end gap-3">
         <Link
           href="/inventory"
           className="flex items-center justify-center rounded-lg text-sm font-semibold"
-          style={{ height: 44, padding: '0 24px', border: '1px solid #222222', color: '#888888' }}
+          style={{ height: 44, padding: '0 24px', border: '1px solid var(--border)', color: 'var(--text-muted)' }}
         >
           Cancel
         </Link>
@@ -253,20 +253,20 @@ export default function AddStockForm() {
           style={{
             height: 44,
             padding: '0 32px',
-            background: isPending ? '#00CC70' : '#00FF88',
-            color: '#0A0A0A',
+            background: 'var(--accent)',
+            color: 'var(--background)',
             opacity: isPending ? 0.8 : 1,
             cursor: isPending ? 'not-allowed' : 'pointer',
           }}
         >
           {isPending ? (
             <>
-              <Loader2 size={16} color="#0A0A0A" className="animate-spin" />
+              <Loader2 size={16} color="var(--background)" className="animate-spin" />
               Adding...
             </>
           ) : (
             <>
-              <Plus size={16} color="#0A0A0A" />
+              <Plus size={16} color="var(--background)" />
               Add to Stock
             </>
           )}

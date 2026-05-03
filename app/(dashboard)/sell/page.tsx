@@ -21,7 +21,7 @@ export default async function SellPage({
       <TopBar
         title="Sell Phone"
         action={
-          <Link href="/inventory" className="text-sm font-medium" style={{ color: '#00FF88' }}>
+          <Link href="/inventory" className="text-sm font-medium" style={{ color: 'var(--accent)' }}>
             ← Back to Inventory
           </Link>
         }

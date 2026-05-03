@@ -18,10 +18,10 @@ export default function StockCard({ item }: { item: StockItem }) {
   return (
     <div
       className="flex flex-col rounded-xl overflow-hidden"
-      style={{ background: '#1A1A1A', border: '1px solid #222222' }}
+      style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
     >
       {/* Photo */}
-      <div className="relative flex items-center justify-center" style={{ height: 160, background: '#111111' }}>
+      <div className="relative flex items-center justify-center" style={{ height: 160, background: 'var(--bg-sunken)' }}>
         {item.images.length > 0 ? (
           <CldImage
             src={item.images[0]}
@@ -31,42 +31,42 @@ export default function StockCard({ item }: { item: StockItem }) {
             className="object-cover w-full h-full"
           />
         ) : (
-          <Smartphone size={48} color="#333333" />
+          <Smartphone size={48} color="var(--text-dim)" />
         )}
       </div>
 
       {/* Info */}
       <div className="flex flex-col gap-2" style={{ padding: 16 }}>
         <span className="text-sm font-semibold text-white">{item.model}</span>
-        <span className="text-xs" style={{ color: '#888888' }}>
+        <span className="text-xs" style={{ color: 'var(--text-muted)' }}>
           {item.storage} · {item.color} · {conditionLabel[item.condition]}
         </span>
 
         {/* Price + badge */}
         <div className="flex items-center justify-between">
-          <span className="text-base font-bold" style={{ color: '#00FF88' }}>
+          <span className="text-base font-bold" style={{ color: 'var(--accent)' }}>
             {zar.format(item.costPrice)}
           </span>
 
           {isInStock ? (
             <span
               className="flex items-center gap-1.5 rounded-full text-xs font-semibold"
-              style={{ background: '#00FF8818', color: '#00FF88', padding: '4px 10px' }}
+              style={{ background: 'var(--accent-dim)', color: 'var(--accent)', padding: '4px 10px' }}
             >
               <span
                 className="rounded-full flex-shrink-0"
-                style={{ width: 6, height: 6, background: '#00FF88', display: 'inline-block' }}
+                style={{ width: 6, height: 6, background: 'var(--accent)', display: 'inline-block' }}
               />
               In Stock
             </span>
           ) : (
             <span
               className="flex items-center gap-1.5 rounded-full text-xs font-semibold"
-              style={{ background: '#FF444418', color: '#FF4444', padding: '4px 10px' }}
+              style={{ background: 'var(--danger-dim)', color: 'var(--danger)', padding: '4px 10px' }}
             >
               <span
                 className="rounded-full flex-shrink-0"
-                style={{ width: 6, height: 6, background: '#FF4444', display: 'inline-block' }}
+                style={{ width: 6, height: 6, background: 'var(--danger)', display: 'inline-block' }}
               />
               Sold
             </span>
@@ -77,8 +77,9 @@ export default function StockCard({ item }: { item: StockItem }) {
         {isInStock && (
           <Link
             href={`/sell?id=${item.id}`}
+            prefetch={false}
             className="flex items-center justify-center rounded-lg text-sm font-bold mt-1"
-            style={{ height: 36, background: '#00FF88', color: '#0A0A0A' }}
+            style={{ height: 36, background: 'var(--accent)', color: 'var(--background)' }}
           >
             Sell
           </Link>

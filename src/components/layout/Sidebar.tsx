@@ -11,15 +11,15 @@ export default function Sidebar() {
   return (
     <aside
       className="hidden lg:flex flex-col gap-8 fixed left-0 top-0 h-full w-60 z-40"
-      style={{ background: '#111111', borderRight: '1px solid #222222', padding: '24px 16px' }}
+      style={{ background: 'var(--bg-sunken)', borderRight: '1px solid var(--border)', padding: '24px 16px' }}
     >
       {/* Logo */}
       <div className="flex items-center gap-2.5 pl-1">
         <div
           className="flex items-center justify-center rounded-lg"
-          style={{ width: 32, height: 32, background: '#1A5C38' }}
+          style={{ width: 32, height: 32, background: 'var(--accent-dark)' }}
         >
-          <Smartphone size={18} color="#00FF88" />
+          <Smartphone size={18} color="var(--accent)" />
         </div>
         <span className="text-white font-extrabold text-lg">FlipTrack</span>
       </div>
@@ -35,11 +35,11 @@ export default function Sidebar() {
               className="flex items-center gap-3 rounded-lg px-4 py-2.5 w-full transition-colors"
               style={
                 active
-                  ? { background: '#1A5C38', color: '#FFFFFF', fontWeight: 600 }
-                  : { color: '#888888', fontWeight: 500 }
+                  ? { background: 'var(--accent-dark)', color: 'var(--foreground)', fontWeight: 600 }
+                  : { color: 'var(--text-muted)', fontWeight: 500 }
               }
             >
-              <Icon size={20} color={active ? '#00FF88' : '#888888'} />
+              <Icon size={20} color={active ? 'var(--accent)' : 'var(--text-muted)'} />
               <span className="text-sm">{label}</span>
             </Link>
           )

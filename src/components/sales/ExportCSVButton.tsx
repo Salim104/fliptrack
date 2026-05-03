@@ -42,7 +42,7 @@ export default function ExportCSVButton({ sales }: Props) {
     <button
       onClick={handleExport}
       className="flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg cursor-pointer"
-      style={{ border: '1px solid #333333', color: '#888888', background: 'transparent' }}
+      style={{ border: '1px solid var(--border)', color: 'var(--text-muted)', background: 'transparent' }}
     >
       <Download size={15} />
       Export CSV

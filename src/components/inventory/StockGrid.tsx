@@ -24,7 +24,7 @@ export default function StockGrid({ items }: { items: StockItem[] }) {
         {/* Title */}
         <div className="flex flex-col gap-1">
           <h1 className="text-2xl font-bold text-white">Inventory</h1>
-          <p className="text-sm" style={{ color: '#888888' }}>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
             {inStockCount} phones in stock
           </p>
         </div>
@@ -36,20 +36,20 @@ export default function StockGrid({ items }: { items: StockItem[] }) {
             style={{
               width: undefined,
               height: 40,
-              background: '#1A1A1A',
-              border: '1px solid #222222',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border)',
               borderRadius: 8,
               padding: '0 12px',
             }}
           >
-            <Search size={16} color="#555555" className="flex-shrink-0" />
+            <Search size={16} color="var(--text-dim)" className="flex-shrink-0" />
             <input
               type="text"
               placeholder="Search by model, IMEI..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="flex-1 bg-transparent text-sm outline-none placeholder-[#555555]"
-              style={{ color: '#FFFFFF', minWidth: 0 }}
+              style={{ color: 'var(--foreground)', minWidth: 0 }}
             />
           </div>
 
@@ -58,12 +58,12 @@ export default function StockGrid({ items }: { items: StockItem[] }) {
             className="flex items-center gap-2 rounded-lg text-sm font-bold flex-shrink-0"
             style={{
               height: 40,
-              background: '#00FF88',
-              color: '#0A0A0A',
+              background: 'var(--accent)',
+              color: 'var(--background)',
               padding: '0 16px',
             }}
           >
-            <Plus size={16} color="#0A0A0A" />
+            <Plus size={16} color="var(--background)" />
             Add Stock
           </Link>
         </div>
@@ -72,7 +72,7 @@ export default function StockGrid({ items }: { items: StockItem[] }) {
       {/* Grid or empty state */}
       {filtered.length === 0 ? (
         <div className="flex items-center justify-center py-24">
-          <p className="text-sm" style={{ color: '#888888' }}>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
             No stock found
           </p>
         </div>

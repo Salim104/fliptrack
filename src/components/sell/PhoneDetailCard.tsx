@@ -24,7 +24,7 @@ export default function PhoneDetailCard({ item }: { item: StockItem }) {
   return (
     <div
       className="flex flex-col gap-4 rounded-xl w-full lg:w-80 lg:flex-shrink-0"
-      style={{ background: '#1A1A1A', border: '1px solid #222222', padding: 24 }}
+      style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: 24 }}
     >
       {/* Phone image */}
       {item.images.length > 0 ? (
@@ -38,21 +38,21 @@ export default function PhoneDetailCard({ item }: { item: StockItem }) {
       ) : (
         <div
           className="flex items-center justify-center"
-          style={{ width: '100%', height: 200, background: '#111111', borderRadius: 8 }}
+          style={{ width: '100%', height: 200, background: 'var(--bg-sunken)', borderRadius: 8 }}
         >
-          <Smartphone size={64} color="#333333" />
+          <Smartphone size={64} color="var(--text-dim)" />
         </div>
       )}
 
       {/* Model name */}
-      <h2 style={{ fontSize: 18, fontWeight: 700, color: '#FFFFFF' }}>{item.model}</h2>
+      <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--foreground)' }}>{item.model}</h2>
 
       {/* Spec rows */}
       <div className="flex flex-col gap-2">
         {specs.map(({ label, value, accent }) => (
           <div key={label} className="flex items-center justify-between">
-            <span style={{ color: '#888888', fontSize: 13 }}>{label}</span>
-            <span style={{ color: accent ? '#00FF88' : '#FFFFFF', fontSize: 13, fontWeight: 600 }}>
+            <span style={{ color: 'var(--text-muted)', fontSize: 13 }}>{label}</span>
+            <span style={{ color: accent ? 'var(--accent)' : 'var(--foreground)', fontSize: 13, fontWeight: 600 }}>
               {value}
             </span>
           </div>

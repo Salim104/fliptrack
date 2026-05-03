@@ -43,7 +43,7 @@ export default function DownloadReceiptButton({ sale }: Props) {
       className="flex items-center justify-center rounded"
       style={{ width: 32, height: 32, opacity: loading ? 0.5 : 1, cursor: loading ? 'wait' : 'pointer' }}
     >
-      <Download size={16} color="#888888" />
+      <Download size={16} color="var(--text-muted)" />
     </button>
   )
 }

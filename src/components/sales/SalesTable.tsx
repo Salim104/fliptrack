@@ -13,25 +13,25 @@ export default function SalesTable({ sales }: SalesTableProps) {
     <div className="overflow-x-auto">
       <div
         className="rounded-xl overflow-hidden"
-        style={{ background: '#1A1A1A', border: '1px solid #222222', minWidth: 640 }}
+        style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', minWidth: 640 }}
       >
         {/* Header */}
         <div
           className="flex items-center"
-          style={{ background: '#111111', height: 40, padding: '0 20px' }}
+          style={{ background: 'var(--bg-sunken)', height: 40, padding: '0 20px' }}
         >
-          <span className="w-40 text-xs font-semibold shrink-0" style={{ color: '#888888' }}>Date</span>
-          <span className="flex-1 text-xs font-semibold" style={{ color: '#888888' }}>Phone</span>
-          <span className="flex-1 text-xs font-semibold" style={{ color: '#888888' }}>Buyer</span>
-          <span className="w-28 text-xs font-semibold shrink-0" style={{ color: '#888888' }}>Sale Price</span>
-          <span className="w-24 text-xs font-semibold shrink-0" style={{ color: '#888888' }}>Profit</span>
-          <span className="w-20 text-xs font-semibold shrink-0" style={{ color: '#888888' }}>Receipt</span>
+          <span className="w-40 text-xs font-semibold shrink-0" style={{ color: 'var(--text-muted)' }}>Date</span>
+          <span className="flex-1 text-xs font-semibold" style={{ color: 'var(--text-muted)' }}>Phone</span>
+          <span className="flex-1 text-xs font-semibold" style={{ color: 'var(--text-muted)' }}>Buyer</span>
+          <span className="w-28 text-xs font-semibold shrink-0" style={{ color: 'var(--text-muted)' }}>Sale Price</span>
+          <span className="w-24 text-xs font-semibold shrink-0" style={{ color: 'var(--text-muted)' }}>Profit</span>
+          <span className="w-20 text-xs font-semibold shrink-0" style={{ color: 'var(--text-muted)' }}>Receipt</span>
         </div>
 
         {/* Rows */}
         {sales.length === 0 ? (
           <div className="flex items-center justify-center py-16">
-            <p className="text-sm" style={{ color: '#888888' }}>No sales recorded yet</p>
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>No sales recorded yet</p>
           </div>
         ) : null}
         {sales.map((sale, i) => {
@@ -49,14 +49,14 @@ export default function SalesTable({ sales }: SalesTableProps) {
               style={{
                 height: 52,
                 padding: '0 20px',
-                borderBottom: isLast ? 'none' : '1px solid #222222',
+                borderBottom: isLast ? 'none' : '1px solid var(--border)',
               }}
             >
-              <span className="w-40 text-sm shrink-0" style={{ color: '#888888' }}>{date}</span>
+              <span className="w-40 text-sm shrink-0" style={{ color: 'var(--text-muted)' }}>{date}</span>
               <span className="flex-1 text-sm text-white">{sale.stockItem.model} {sale.stockItem.storage}</span>
               <span className="flex-1 text-sm text-white">{sale.buyerName}</span>
               <span className="w-28 text-sm font-semibold text-white shrink-0">{zar.format(sale.salePrice)}</span>
-              <span className="w-24 text-sm font-semibold shrink-0" style={{ color: '#00FF88' }}>
+              <span className="w-24 text-sm font-semibold shrink-0" style={{ color: 'var(--accent)' }}>
                 +{zar.format(profit)}
               </span>
               <span className="w-20 shrink-0">

@@ -24,14 +24,14 @@ const PAYMENT_METHODS = [
 ]
 
 const labelStyle: React.CSSProperties = {
-  color: '#888888',
+  color: 'var(--text-muted)',
   fontSize: 13,
   fontWeight: 600,
 }
 
 function FieldError({ msg }: { msg?: string }) {
   if (!msg) return null
-  return <span style={{ color: '#FF4444', fontSize: 12 }}>{msg}</span>
+  return <span style={{ color: 'var(--danger)', fontSize: 12 }}>{msg}</span>
 }
 
 function validate(fields: {
@@ -88,9 +88,9 @@ export default function SaleForm({ item }: { item: StockItem }) {
   return (
     <div
       className="flex-1 flex flex-col gap-6 rounded-xl"
-      style={{ background: '#1A1A1A', border: '1px solid #222222', padding: 32 }}
+      style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: 32 }}
     >
-      <h2 style={{ fontSize: 18, fontWeight: 700, color: '#FFFFFF' }}>Sale Details</h2>
+      <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--foreground)' }}>Sale Details</h2>
 
       {/* Buyer Name */}
       <div className="flex flex-col gap-1.5">
@@ -106,11 +106,11 @@ export default function SaleForm({ item }: { item: StockItem }) {
           className="placeholder-[#555555] outline-none"
           style={{
             height: 44,
-            background: '#111111',
-            border: errors.buyerName ? '1px solid #FF4444' : '1px solid #222222',
+            background: 'var(--bg-sunken)',
+            border: errors.buyerName ? '1px solid var(--danger)' : '1px solid var(--border)',
             borderRadius: 8,
             padding: '0 14px',
-            color: '#FFFFFF',
+            color: 'var(--foreground)',
             fontSize: 14,
           }}
         />
@@ -124,13 +124,13 @@ export default function SaleForm({ item }: { item: StockItem }) {
           className="flex items-center gap-2"
           style={{
             height: 44,
-            background: '#111111',
-            border: errors.buyerPhone ? '1px solid #FF4444' : '1px solid #222222',
+            background: 'var(--bg-sunken)',
+            border: errors.buyerPhone ? '1px solid var(--danger)' : '1px solid var(--border)',
             borderRadius: 8,
             padding: '0 14px',
           }}
         >
-          <span style={{ color: '#888888', fontWeight: 600, fontSize: 14, flexShrink: 0 }}>+27</span>
+          <span style={{ color: 'var(--text-muted)', fontWeight: 600, fontSize: 14, flexShrink: 0 }}>+27</span>
           <input
             type="tel"
             placeholder="..."
@@ -140,7 +140,7 @@ export default function SaleForm({ item }: { item: StockItem }) {
               setErrors((p) => ({ ...p, buyerPhone: undefined }))
             }}
             className="flex-1 bg-transparent outline-none placeholder-[#555555] text-sm"
-            style={{ color: '#FFFFFF' }}
+            style={{ color: 'var(--foreground)' }}
           />
         </div>
         <FieldError msg={errors.buyerPhone} />
@@ -154,13 +154,13 @@ export default function SaleForm({ item }: { item: StockItem }) {
             className="flex items-center gap-2"
             style={{
               height: 44,
-              background: '#111111',
-              border: errors.salePrice ? '1px solid #FF4444' : '1px solid #222222',
+              background: 'var(--bg-sunken)',
+              border: errors.salePrice ? '1px solid var(--danger)' : '1px solid var(--border)',
               borderRadius: 8,
               padding: '0 14px',
             }}
           >
-            <span style={{ color: '#888888', fontWeight: 600, fontSize: 14, flexShrink: 0 }}>R</span>
+            <span style={{ color: 'var(--text-muted)', fontWeight: 600, fontSize: 14, flexShrink: 0 }}>R</span>
             <input
               type="number"
               placeholder="0.00"
@@ -170,7 +170,7 @@ export default function SaleForm({ item }: { item: StockItem }) {
                 setErrors((p) => ({ ...p, salePrice: undefined }))
               }}
               className="flex-1 bg-transparent outline-none placeholder-[#555555] text-sm"
-              style={{ color: '#FFFFFF' }}
+              style={{ color: 'var(--foreground)' }}
               min={0}
             />
           </div>
@@ -203,18 +203,18 @@ export default function SaleForm({ item }: { item: StockItem }) {
       <div
         className="flex items-center justify-between rounded-lg"
         style={{
-          background: isLoss ? '#2B0D0D' : '#0D2B1A',
-          border: `1px solid ${isLoss ? '#5C1A1A' : '#1A5C38'}`,
+          background: isLoss ? 'var(--danger-bg)' : 'var(--accent-bg)',
+          border: `1px solid ${isLoss ? 'var(--danger-dark)' : 'var(--accent-dark)'}`,
           padding: '16px 20px',
         }}
       >
         <div className="flex flex-col gap-0.5">
-          <span style={{ color: '#888888', fontSize: 14, fontWeight: 500 }}>Estimated Profit</span>
+          <span style={{ color: 'var(--text-muted)', fontSize: 14, fontWeight: 500 }}>Estimated Profit</span>
           {isLoss && (
-            <span style={{ color: '#FF4444', fontSize: 12 }}>Selling below cost price</span>
+            <span style={{ color: 'var(--danger)', fontSize: 12 }}>Selling below cost price</span>
           )}
         </div>
-        <span style={{ color: isLoss ? '#FF4444' : '#00FF88', fontSize: 20, fontWeight: 800 }}>
+        <span style={{ color: isLoss ? 'var(--danger)' : 'var(--accent)', fontSize: 20, fontWeight: 800 }}>
           {profitDisplay}
         </span>
       </div>
@@ -224,7 +224,7 @@ export default function SaleForm({ item }: { item: StockItem }) {
         <Link
           href="/inventory"
           className="flex items-center justify-center rounded-lg text-sm font-semibold"
-          style={{ height: 44, padding: '0 24px', border: '1px solid #222222', color: '#888888' }}
+          style={{ height: 44, padding: '0 24px', border: '1px solid var(--border)', color: 'var(--text-muted)' }}
         >
           Cancel
         </Link>
@@ -236,13 +236,13 @@ export default function SaleForm({ item }: { item: StockItem }) {
           style={{
             height: 44,
             padding: '0 32px',
-            background: isPending ? '#00CC6A' : '#00FF88',
-            color: '#0A0A0A',
+            background: 'var(--accent)',
+            color: 'var(--background)',
             opacity: isPending ? 0.8 : 1,
             cursor: isPending ? 'not-allowed' : 'pointer',
           }}
         >
-          <Check size={16} color="#0A0A0A" />
+          <Check size={16} color="var(--background)" />
           {isPending ? 'Confirming...' : 'Confirm Sale'}
         </button>
       </div>

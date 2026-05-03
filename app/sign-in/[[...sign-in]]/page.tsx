@@ -4,7 +4,7 @@ export default function SignInPage() {
   return (
     <main
       className="min-h-screen flex items-center justify-center"
-      style={{ background: '#0A0A0A' }}
+      style={{ background: 'var(--background)' }}
     >
       <SignIn />
     </main>

@@ -49,14 +49,14 @@ export function SelectTrigger({
       className={`flex items-center justify-between w-full ${className ?? ''}`}
       style={{
         height: 44,
-        background: '#111111',
-        border: '1px solid #222222',
+        background: 'var(--bg-sunken)',
+        border: '1px solid var(--border)',
         borderRadius: 8,
         padding: '0 14px',
       }}
     >
       {children}
-      <ChevronDown size={16} color="#888888" className="flex-shrink-0" />
+      <ChevronDown size={16} color="var(--text-muted)" className="flex-shrink-0" />
     </button>
   )
 }
@@ -64,7 +64,7 @@ export function SelectTrigger({
 export function SelectValue({ placeholder }: { placeholder?: string }) {
   const { value } = useContext(SelectContext)
   return (
-    <span style={{ color: value ? '#FFFFFF' : '#888888', fontSize: 14 }}>
+    <span style={{ color: value ? 'var(--foreground)' : 'var(--text-muted)', fontSize: 14 }}>
       {value || placeholder}
     </span>
   )
@@ -82,8 +82,8 @@ export function SelectContent({ children }: { children: React.ReactNode }) {
       <div
         className="absolute z-50 w-full mt-1 rounded-lg overflow-y-auto"
         style={{
-          background: '#111111',
-          border: '1px solid #222222',
+          background: 'var(--bg-sunken)',
+          border: '1px solid var(--border)',
           maxHeight: 240,
         }}
       >
@@ -112,8 +112,8 @@ export function SelectItem({
       className="flex w-full items-center text-sm"
       style={{
         padding: '10px 14px',
-        color: isSelected ? '#00FF88' : '#FFFFFF',
-        background: isSelected ? '#1A5C38' : 'transparent',
+        color: isSelected ? 'var(--accent)' : 'var(--foreground)',
+        background: isSelected ? 'var(--accent-dark)' : 'transparent',
         textAlign: 'left',
       }}
     >

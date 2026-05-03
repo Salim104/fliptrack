@@ -18,7 +18,7 @@ export default function TopBar({ title, subtitle, action }: TopBarProps) {
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-bold text-white">{title}</h1>
         {subtitle && (
-          <p className="text-sm" style={{ color: '#888888' }}>{subtitle}</p>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{subtitle}</p>
         )}
       </div>
 
@@ -29,14 +29,14 @@ export default function TopBar({ title, subtitle, action }: TopBarProps) {
         <div className="flex items-center gap-3">
           <button
             className="flex items-center justify-center rounded-lg"
-            style={{ width: 40, height: 40, background: '#1A1A1A', border: '1px solid #222222' }}
+            style={{ width: 40, height: 40, background: 'var(--bg-card)', border: '1px solid var(--border)' }}
             aria-label="Notifications"
           >
-            <Bell size={18} color="#888888" />
+            <Bell size={18} color="var(--text-muted)" />
           </button>
           <div
             className="flex items-center justify-center rounded-full text-white text-sm font-semibold"
-            style={{ width: 40, height: 40, background: '#1A5C38' }}
+            style={{ width: 40, height: 40, background: 'var(--accent-dark)' }}
           >
             {initials}
           </div>

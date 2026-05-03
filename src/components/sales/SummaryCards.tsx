@@ -22,12 +22,12 @@ export default function SummaryCards({ sales }: SummaryCardsProps) {
         <div
           key={card.label}
           className="flex-1 flex flex-col gap-2 rounded-xl"
-          style={{ background: '#1A1A1A', border: '1px solid #222222', padding: '16px 20px' }}
+          style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '16px 20px' }}
         >
-          <span className="text-xs" style={{ color: '#888888' }}>{card.label}</span>
+          <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{card.label}</span>
           <span
             className="text-3xl font-extrabold leading-none"
-            style={{ color: card.green ? '#00FF88' : '#FFFFFF' }}
+            style={{ color: card.green ? 'var(--accent)' : 'var(--foreground)' }}
           >
             {card.value}
           </span>
