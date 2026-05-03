@@ -1,48 +1,39 @@
-# Current Feature: Sales History — Backend Wiring + PDF Receipt (/sales-history)
+# Current Feature: Dashboard — Backend Wiring (/)
 
 ## Feature File
-`context/features/10-sales-history-backend.md`
+`context/features/11-dashboard-backend.md`
 
 ## What to Build
-1. src/components/sales/SaleReceipt.tsx — @react-pdf/renderer Document component
-   (professional receipt layout for accountant)
-2. src/components/sales/DownloadReceiptButton.tsx — client component, dynamic import
-   of SaleReceipt (ssr: false), triggers pdf().download() on click
-3. src/components/sales/ExportCSVButton.tsx — client component, generates CSV from
-   sales array, triggers browser download
-4. src/components/sales/SummaryCards.tsx — update to accept real data as props
-5. src/components/sales/SalesTable.tsx — update to accept real Sale + StockItem data,
-   wire DownloadReceiptButton per row
-6. src/app/(dashboard)/sales-history/page.tsx — convert to async server component,
-   fetch real sales with stockItem included, pass to components
+1. src/app/(dashboard)/page.tsx — convert to async server component, run all Prisma
+   queries in parallel with Promise.all, calculate metrics, pass real data to components
+2. src/components/dashboard/RecentSalesTable.tsx — update prop types to accept
+   real Sale & { stockItem: StockItem } data, update column rendering
 
 ## Build Order
-Build in the order listed above — PDF receipt first, then buttons, then table
-update, then page fetch.
+Build in the order listed above — page queries first, then table prop update.
 
 ## Design Reference
-- No UI changes to the page — same Sales History design from frontend phase
-- PDF receipt layout: clean, printable, professional
-  * Header: "FlipTrack" bold + "Sales Receipt" subtitle
-  * Two columns: label left, value right
-  * Sections: Buyer Info / Phone Details / Transaction
-  * Profit line bold with accent colour (#00FF88)
-  * Footer: "Thank you for your business" + generated timestamp
+- No UI changes — same Dashboard design from frontend phase
+- Real numbers replace mock values in metric cards and recent sales table
 
 ## Notes
-- @react-pdf/renderer: MUST use next/dynamic with ssr: false in DownloadReceiptButton
-  — direct import will crash Next.js SSR
-- PDF prop: Sale & { stockItem: StockItem } (Prisma types)
-- PDF filename: receipt-[buyerName]-[YYYY-MM-DD].pdf
-- CSV separator: semicolons (;) for Excel compatibility in South Africa
-- CSV columns: Date;Phone;Buyer;Phone Number;Sale Price;Cost Price;Profit;Payment Method
-- SummaryCards totals from real data:
-    Total Sales = sales.length
-    Total Revenue = sales.reduce((s, r) => s + r.salePrice, 0)
-    Total Profit = sales.reduce((s, r) => s + (r.salePrice - r.stockItem.costPrice), 0)
-- Do not delete mock-data.ts — Dashboard still uses it
-- Condition display map: BRAND_NEW → "Brand New", LIKE_NEW → "Like New",
-  GOOD → "Good", FAIR → "Fair", POOR → "Poor"
+- Frontend only change: page.tsx + RecentSalesTable.tsx
+- Promise.all queries:
+    [totalStock, soldCount, allSales, recentSales] = await Promise.all([
+      prisma.stockItem.count(),
+      prisma.stockItem.count({ where: { status: 'SOLD' } }),
+      prisma.sale.findMany({ include: { stockItem: true } }),
+      prisma.sale.findMany({ orderBy: { createdAt: 'desc' }, take: 5, include: { stockItem: true } })
+    ])
+- Revenue = allSales.reduce((s, r) => s + r.salePrice, 0)
+- Profit = allSales.reduce((s, r) => s + (r.salePrice - r.stockItem.costPrice), 0)
+- ProfitMargin = revenue > 0 ? (profit / revenue * 100).toFixed(1) + "% margin" : "0% margin"
+- RecentSalesTable Phone column: stockItem.model + " " + stockItem.storage
+- Date format: Intl.DateTimeFormat('en-ZA', { day: '2-digit', month: 'short', year: 'numeric' })
+- Sub-labels on metric cards: replace delta strings with "Total in DB", "All time",
+  "All time revenue", "All time profit"
+- Remove mock metrics + recentSales from mock-data.ts if no other file imports them
+  (check before deleting)
 
 ## Status
 `Not Started`
